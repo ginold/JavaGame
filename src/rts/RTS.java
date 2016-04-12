@@ -22,6 +22,9 @@ public class RTS extends BasicGame {
     public static final int height = 600;
 
     public Player player;
+    public int tween = 50;
+    
+    public CollisionManager collisions;
 
     public RTS() {
         super("Wizard game");
@@ -40,28 +43,42 @@ public class RTS extends BasicGame {
 
     @Override
     public void init(GameContainer container) throws SlickException {
-        player = new Player(10, 30);
-        tilemap = new TileMap("C:\\Users\\_ginold_\\Documents\\NetBeansProjects\\RTS\\src\\rts\\map.txt");
+        player = new Player(RTS.width/2 - 32, RTS.height/2 - 32); //position
+        tilemap = new TileMap("C:\\Users\\ginold\\Documents\\NetBeansProjects\\JavaGame\\src\\rts\\map.txt");
+        collisions = new CollisionManager(tilemap, player);
     }
 
     @Override
     public void update(GameContainer container, int delta) throws SlickException {
         Input input = container.getInput();
         if (input.isKeyDown(Input.KEY_LEFT)) {
-            player.move("left");
-        }
+            if (!collisions.checkCollisions()) {
+                tilemap.setPosition(tilemap.x + tween +2, tilemap.y);
+            } else {
+                tilemap.setPosition(tilemap.x - tween, tilemap.y);
+            }
+        } 
         if (input.isKeyDown(Input.KEY_RIGHT)) {
-            player.move("right");
+            if (!collisions.checkCollisions()) {
+                 tilemap.setPosition(tilemap.x - tween +2, tilemap.y);
+            } else {
+                 tilemap.setPosition(tilemap.x + tween, tilemap.y);
+            }
         }
         if (input.isKeyDown(Input.KEY_UP)) {
-            player.move("up");
+            if (!collisions.checkCollisions()) {
+                tilemap.setPosition(tilemap.x, tilemap.y + tween +2);
+            } else {
+                tilemap.setPosition(tilemap.x, tilemap.y - tween +2);
+            }
         }
         if (input.isKeyDown(Input.KEY_DOWN)) {
-            player.move("down");
+            if (!collisions.checkCollisions()) {
+                tilemap.setPosition(tilemap.x, tilemap.y - tween +2);
+            } else {
+                tilemap.setPosition(tilemap.x, tilemap.y + tween +2);
+            }
         }
-
-        tilemap.setPosition(RTS.width / 5 - player.getX(), RTS.height/ 5- player.getY());
-        player.update();
     }
 
     @Override

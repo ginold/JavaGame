@@ -8,7 +8,9 @@ package rts;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.logging.Logger;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -20,10 +22,10 @@ import org.newdawn.slick.Input;
  */
 public class TileMap {
 
-    private int numCols;
-    private int numRows;
-    private int map[][];
-    private int tilesize = 48;
+    public int numCols;
+    public int numRows;
+    public int map[][];
+    public int tilesize = 48;
     private String tokens[];
     private Image grass;
     private Image tree;
@@ -34,10 +36,10 @@ public class TileMap {
 
     private int ymin, ymax, xmin, xmax;
     
-    private int rowOffset, colOffset, numRowsToDraw, numColsToDraw;
+    public int rowOffset, colOffset, numRowsToDraw, numColsToDraw;
 
-    private int x;
-    private int y;
+    public int x = RTS.width /2;
+    public int y = RTS.height /2;
 
     private int width, height;
 
@@ -47,11 +49,10 @@ public class TileMap {
         numRowsToDraw = RTS.height / tilesize +2;
         numColsToDraw = RTS.width / tilesize + 2;
         
-        System.out.println(numRowsToDraw);
-        System.out.println(numColsToDraw);
         try {
-            tree = new Image("C:\\Users\\_ginold_\\Documents\\NetBeansProjects\\RTS\\src\\rts\\resources\\tree.png");
-            grass = new Image("C:\\Users\\_ginold_\\Documents\\NetBeansProjects\\RTS\\src\\rts\\resources\\grass.png");
+            this.tree = new Image("C:\\Users\\ginold\\Documents\\NetBeansProjects\\JavaGame\\src\\rts\\resources\\tree.png");
+            this.grass = new Image("C:\\Users\\ginold\\Documents\\NetBeansProjects\\JavaGame\\src\\rts\\resources\\grass.png");
+            
             BufferedReader br = new BufferedReader(new FileReader(source));
             String delimiters = " ";
 
@@ -76,14 +77,6 @@ public class TileMap {
                 numCols = br.readLine().split(delimiters).length;
                 br.close();
 
-                width = numRows * tilesize;
-                height = numCols * tilesize;
-
-                xmin = RTS.width - width;
-                xmax = 0;
-                ymin = RTS.height - height;
-                ymax = 0;
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,59 +99,48 @@ public class TileMap {
 
     void render(Graphics g) {
         for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
-         
+            // nothing else to draw, out of bounds
+            if (row >= numRows) {
+                break;
+            }
+            if (row <= 0) {
+                row = 0;
+            }
             for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
-                System.out.println(colOffset+numColsToDraw);
-                System.out.println(rowOffset + numRowsToDraw);
                 if (col <= 0) {
-                    col = 1;
+                    col = 0;
                 }
-                if (row <= 0) {
-                  row = 1;  
+                // nothing else to draw, out of bounds
+                if (col >= numCols) {
+                    break;
                 }
                 
-//                if (row > numRows-1) {
-//                    row = numRows -1;
-//                }
-//                if (col > numCols -1) {
-//                  col = numCols -1;  
-//                }
-    
-//                System.out.println("num cols " +numCols);
-//                System.out.println("num rows " + numRows);
-//                System.out.println("row " + row);
-//                System.out.println("col " + col);
-               // System.out.println(map[15][31]);
-//                if (row > numRows-1) {
-//                    row = 4;
-//                }
-//                if (col > numRows - 1) {
-//                    col = 9;
-//                }
                 int rowcol = map[row][col];
                 
                 if (rowcol == 0) {
-                    g.drawImage(tree, x + col * tilesize, y + row * tilesize);
+                    g.drawImage(tree, this.x + col * tilesize, this.y + row * tilesize);
                 }
                 if (rowcol == 3) {
-                    g.drawImage(grass, x + col * tilesize, y + row * tilesize);
+                    g.drawImage(grass, this.x + col * tilesize, this.y + row * tilesize);
                 }
+                if (rowcol == 5) {
+                    g.fillRect(this.x + col * tilesize, this.y + row * tilesize, tilesize, tilesize);
+                    g.setColor(Color.red);
+                    
+                }
+                g.drawString("x:" + Integer.toString(this.x + col * tilesize), x + col * tilesize , y+ row *tilesize );
+                g.drawString( "y:" + Integer.toString(this.y+ row *tilesize), x + col * tilesize , y+ row *tilesize + 20);
+                g.setColor(Color.white);
             }
         }
     }
 
-
+        // player x, player y
     void setPosition(int x, int y) {
         this.x += (x - this.x) * tween;
         this.y += (y - this.y) * tween;
-        
-        
         this.colOffset = (int) -this.x / tilesize;
         this.rowOffset = (int) -this.y /tilesize;
-        
-//            System.out.println(numCols + "  " +numRows);
-//        System.out.println(rowOffset + " rowoffset");
-//        System.out.println(colOffset + " coloff");
         
         if (rowOffset > numRows-1) {
           rowOffset = numRows;  
@@ -166,7 +148,8 @@ public class TileMap {
         if (colOffset > numCols -1 ) {
           colOffset = numCols;  
         }
-    
+        System.out.println(this.x);
+        System.out.println(this.y);
     }
 
 }

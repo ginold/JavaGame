@@ -5,6 +5,10 @@
  */
 package rts;
 
+import java.awt.Rectangle;
+import java.io.File;
+import java.net.URL;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -19,13 +23,17 @@ public class Player implements KeyListener {
     private int x, y;
     private int tween = 5;
     private Image sprite;
+    private Rectangle bBox;
+    private int tilesize = 48;
     
     public Player(int x, int y) {
         this.x = x;
         this.y = y;
-            
+        this.bBox = new Rectangle(x, y, tilesize, tilesize);
+        
         try {
-            this.sprite = new Image("C:\\Users\\_ginold_\\Documents\\NetBeansProjects\\RTS\\src\\rts\\resources\\player.png");
+
+            this.sprite = new Image("C:\\Users\\ginold\\Documents\\NetBeansProjects\\JavaGame\\src\\rts\\resources\\player.png");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,25 +47,30 @@ public class Player implements KeyListener {
 
     void render(Graphics g) {
         g.drawImage(this.sprite, this.x, this.y);
+        g.drawString("x " + Integer.toString(this.x), this.x, this.y);
+        g.drawString("y " + Integer.toString(this.y), this.x, this.y + 20);
     }
 
-    void update() {
-    }
     
     void move(String direction) {
-        if (direction == "left") {
-            this.x = this.x - tween;
-        }
-        if (direction == "right") {
-            this.x = this.x + tween;
-        }
-        
-        if (direction == "up") {
-            this.y = this.y - tween;
-        }
-        if (direction == "down") {
-            this.y = this.y + tween;
-        }
+//        if (direction == "left") {
+//            this.x = this.x - 1;
+//        }
+//        if (direction == "right") {
+//            this.x++;
+//        }
+//        
+//        if (direction == "up") {
+//            this.y = this.y ;
+//        }
+//        if (direction == "down") {
+//            this.y = this.y ;
+//        }
+    }
+    
+    public Rectangle getBBox() {
+        this.bBox = new Rectangle(this.x, this.y, tilesize+5, tilesize+5);
+        return this.bBox;
     }
 
     @Override
@@ -91,5 +104,10 @@ public class Player implements KeyListener {
     
     public int getY() {
         return this.y;
+    }
+    
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
